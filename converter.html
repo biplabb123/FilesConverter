@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Converter</title>
+  <style>
+    :root {
+      --bg-color-light: linear-gradient(135deg, #74ebd5, #ACB6E5);
+      --bg-color-dark: linear-gradient(135deg, #1f1f1f, #3a3a3a);
+      --text-color-light: #333;
+      --text-color-dark: #eee;
+      --container-bg-light: #fff;
+      --container-bg-dark: #2c2c2c;
+      --primary-color: #007bff;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(270deg, #ff0000, #00ff00, #0000ff, #ff0000);
+      background-size: 600% 600%;
+      animation: rgbBackground 15s ease infinite;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      transition: background 0.5s ease;
+    }
+
+    body.dark {
+      background: linear-gradient(270deg, #330066, #003333, #660000, #330066);
+      background-size: 600% 600%;
+      animation: rgbBackgroundDark 15s ease infinite;
+    }
+
+    @keyframes rgbBackground {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes rgbBackgroundDark {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      background: var(--container-bg-light);
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      max-width: 520px;
+      width: 95%;
+      color: var(--text-color-light);
+      transition: background 0.5s ease, color 0.5s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+    .container:hover {
+      box-shadow: 0 0 25px rgba(0, 123, 255, 0.4);
+    }
+    body.dark .container {
+      background: var(--container-bg-dark);
+      color: var(--text-color-dark);
+    }
+    body.dark .container:hover {
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+    }
+
+    h1 {
+      text-align: center;
+    }
+    input[type="file"], select, button[type="submit"] {
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+      font-size: 0.9rem;
+    }
+    input:hover, select:hover, button:hover {
+      box-shadow: 0 0 8px rgba(0,123,255,0.3);
+      border-color: #007bff;
+    }
+    button[type="submit"] {
+      background-color: #28a745;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      width: 50%;
+      margin: 0.5rem auto;
+      display: block;
+    }
+    button[type="submit"]:hover {
+      background-color: #218838;
+      transform: scale(1.02);
+    }
+
+    #downloadLink {
+      display: none;
+      text-align: center;
+      text-decoration: none;
+      font-weight: bold;
+      background: var(--primary-color);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 50px;
+      margin-top: 1.5rem;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+      display: block;
+      text-align: center;
+      width: max-content;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #downloadLink:hover {
+      background: #0056b3;
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 123, 255, 0.5);
+    }
+
+    .mode-toggle {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 50%;
+      padding: 4px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #333;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .mode-toggle:hover {
+      background: #eee;
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    body.dark .mode-toggle {
+      background: #333;
+      color: #eee;
+      border-color: #555;
+    }
+    body.dark .mode-toggle:hover {
+      background: #444;
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+    }
+
+    @media screen and (max-width: 480px) {
+      .container {
+        padding: 1rem;
+      }
+      input[type="file"], select, button[type="submit"] {
+        font-size: 0.85rem;
+        padding: 8px;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="mode-toggle" onclick="toggleMode()" title="Toggle dark/light mode">☀</button>
+  <div class="container">
+    <h1>File Converter</h1>
+    <form id="fileForm">
+      <input type="file" id="fileInput" required>
+      <select id="conversionType">
+        <option value="jpgToPng">JPG to PNG</option>
+        <option value="jpgToWebp">JPG to WEBP</option>
+        <option value="jpgToPdf">JPG to PDF</option>
+        <option value="pngToJpg">PNG to JPG</option>
+        <option value="pngToWebp">PNG to WEBP</option>
+        <option value="pngToPdf">PNG to PDF</option>
+        <option value="webpToJpg">WEBP to JPG</option>
+        <option value="webpToPng">WEBP to PNG</option>
+        <option value="pdfToTxt">PDF to Text</option>
+        <option value="pdfToJpg">PDF to JPG</option>
+        <option value="docxToTxt">DOCX to Text</option>
+        <option value="pptxToTxt">PPTX to Text</option>
+        <option value="txtToPdf">TXT to PDF</option>
+        <option value="txtToDocx">TXT to DOCX</option>
+      </select>
+      <button type="submit">Convert</button>
+    </form>
+    <p id="message"></p>
+    <a id="downloadLink" download>Download Converted File</a>
+  </div>
+
+  <script>
+    function toggleMode() {
+      document.body.classList.toggle('dark');
+      const toggleBtn = document.querySelector('.mode-toggle');
+      toggleBtn.textContent = document.body.classList.contains('dark') ? '☾' : '☀';
+    }
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+  <script>
+    // existing JavaScript code here (unchanged)
+  </script>
+</body>
+</html>
